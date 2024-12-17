@@ -20,7 +20,7 @@
         }
         textarea {
             width: 100%;
-            height: 200px;
+            height: 150px;
             padding: 10px;
             font-size: 16px;
             border: 1px solid #ccc;
@@ -53,13 +53,13 @@
 
 <div class="container">
     <h1>JS 在线审计</h1>
-    <p>请输入 JavaScript 文件的 URL 或直接粘贴 JavaScript 代码进行审计：</p>
+    <p>请输入 JavaScript 代码进行审计：</p>
 
-    <textarea id="jsInput" placeholder="粘贴 JS 链接或代码..."></textarea>
+    <textarea id="jsInput" placeholder="粘贴 JS 代码..."></textarea>
     <br><br>
     <button onclick="auditJS()">审计代码</button>
 
-    <h3>解析结果：</h3>
+    <h3>审计结果：</h3>
     <pre id="auditResult"></pre>
 </div>
 
@@ -71,28 +71,12 @@
         // 清空结果
         resultElement.textContent = '';
 
-        // 判断是链接还是代码
-        if (input.startsWith('http') || input.startsWith('www')) {
-            // 如果是链接，尝试获取 JavaScript 代码
-            fetch(input)
-                .then(response => response.text())
-                .then(jsCode => {
-                    resultElement.textContent = '获取到的 JavaScript 代码：\n\n' + jsCode;
-
-                    // 简单的审计：检查是否包含危险的函数
-                    const auditResults = auditCode(jsCode);
-                    resultElement.textContent += '\n\n审计结果：\n' + auditResults;
-                })
-                .catch(error => {
-                    resultElement.textContent = '获取 JS 链接失败: ' + error.message;
-                });
-        } else {
-            // 如果是直接粘贴的代码
-            resultElement.textContent = '输入的 JavaScript 代码：\n\n' + input;
-
+        if (input) {
             // 简单的审计：检查是否包含危险的函数
             const auditResults = auditCode(input);
-            resultElement.textContent += '\n\n审计结果：\n' + auditResults;
+            resultElement.textContent = '审计结果：\n' + auditResults;
+        } else {
+            resultElement.textContent = '请输入 JavaScript 代码进行审计。';
         }
     }
 
