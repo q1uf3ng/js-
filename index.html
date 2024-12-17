@@ -68,11 +68,10 @@
         const input = document.getElementById("jsInput").value.trim();
         const resultElement = document.getElementById("auditResult");
 
-        // 清空结果
+
         resultElement.textContent = '';
 
         if (input) {
-            // 简单的审计：检查是否包含危险的模式和关键字
             const auditResults = auditCode(input);
             resultElement.textContent = '审计结果：\n' + auditResults;
         } else {
@@ -81,7 +80,6 @@
     }
 
     function auditCode(jsCode) {
-        // 审计规则：检查特定的 HTTP 请求方法、URL、参数等
         const patterns = [
             { pattern: /type:\s?"POST"/i, message: '警告：发现 POST 请求类型' },
             { pattern: /type:\s?"GET"/i, message: '警告：发现 GET 请求类型' },
@@ -120,7 +118,6 @@
         let auditResults = '';
         let matchFound = false;
 
-        // 检查所有模式
         patterns.forEach(rule => {
             const matches = jsCode.match(rule.pattern);
             if (matches) {
@@ -129,7 +126,6 @@
             }
         });
 
-        // 捕获变量赋值内容
         const variablePattern = /\s*([\w\d_]+)\s*=\s*["']([^"']+)["']/g;
         let variableMatches;
         while ((variableMatches = variablePattern.exec(jsCode)) !== null) {
