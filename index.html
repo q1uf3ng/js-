@@ -53,7 +53,6 @@
 
 <div class="container">
     <h1>JS 在线审计</h1>
-    <p>https://github.com/q1uf3ng/jslook</p>
     <p>请输入 JavaScript 代码进行审计：</p>
 
     <textarea id="jsInput" placeholder="粘贴 JS 代码..."></textarea>
@@ -69,10 +68,11 @@
         const input = document.getElementById("jsInput").value.trim();
         const resultElement = document.getElementById("auditResult");
 
-
+        // 清空结果
         resultElement.textContent = '';
 
         if (input) {
+            // 简单的审计：检查是否包含危险的模式和关键字
             const auditResults = auditCode(input);
             resultElement.textContent = '审计结果：\n' + auditResults;
         } else {
@@ -81,6 +81,7 @@
     }
 
     function auditCode(jsCode) {
+        // 审计规则：检查特定的 HTTP 请求方法、URL、参数等
         const patterns = [
             { pattern: /type:\s?"POST"/i, message: '警告：发现 POST 请求类型' },
             { pattern: /type:\s?"GET"/i, message: '警告：发现 GET 请求类型' },
@@ -100,15 +101,16 @@
             { pattern: /apikey\s*=\s*['"][a-zA-Z0-9_-]{32,}['"]/i, message: '警告：发现 API 密钥参数' },
             { pattern: /data/i, message: '警告：发现数据关键字' },
             { pattern: /params/i, message: '警告：发现参数关键字' },
-            { pattern: /password/i, message: '警告：发现敏感参数 "password"。' },
+            { pattern: /user\s*[:=]\s*["'][^"']*["']/i, message: '警告：发现敏感参数 "user"。' },
+            { pattern: /password\s*[:=]\s*["'][^"']*["']/i, message: '警告：发现敏感参数 "password"。' },
             { pattern: /ak\s*=\s*['"][a-zA-Z0-9_-]{16,40}['"]/i, message: '警告：发现 Access Key (AK) 泄露' },
             { pattern: /sk\s*=\s*['"][a-zA-Z0-9_-]{16,40}['"]/i, message: '警告：发现 Secret Key (SK) 泄露' },
             { pattern: /"ak"\s*:\s*["'][a-zA-Z0-9_-]{16,40}["']/i, message: '警告：发现 JSON 中的 Access Key (AK) 泄露' },
             { pattern: /"sk"\s*:\s*["'][a-zA-Z0-9_-]{16,40}["']/i, message: '警告：发现 JSON 中的 Secret Key (SK) 泄露' },
             { pattern: /access[_-]?key\s*=\s*['"][a-zA-Z0-9_-]{16,40}['"]/i, message: '警告：发现可能的 Access Key (AK) 泄露' },
             { pattern: /secret[_-]?key\s*=\s*['"][a-zA-Z0-9_-]{16,40}['"]/i, message: '警告：发现可能的 Secret Key (SK) 泄露' },
-            { pattern: /pass/i, message: '警告：发现敏感参数 "pass"' },
-            { pattern: /passwd/i, message: '警告：发现敏感参数 "passwd"' },
+            { pattern: /pass\s*[:=]\s*["'][^"']*["']/i, message: '警告：发现敏感参数 "pass"' },
+            { pattern: /passwd\s*[:=]\s*["'][^"']*["']/i, message: '警告：发现敏感参数 "passwd"' },
             { pattern: /admin/i, message: '警告：发现敏感参数 "admin"' },
             { pattern: /source:"/i, message: '警告：发现敏感参数 "source"' },
             { pattern: /name/i, message: '警告：发现敏感参数 "name"' }
@@ -118,6 +120,7 @@
         let auditResults = '';
         let matchFound = false;
 
+        // 检查所有模式
         patterns.forEach(rule => {
             const matches = jsCode.match(rule.pattern);
             if (matches) {
@@ -126,6 +129,7 @@
             }
         });
 
+        // 捕获变量赋值内容
         const variablePattern = /\s*([\w\d_]+)\s*=\s*["']([^"']+)["']/g;
         let variableMatches;
         while ((variableMatches = variablePattern.exec(jsCode)) !== null) {
