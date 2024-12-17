@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS 在线审计</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            resize: vertical;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        pre {
+            background-color: #f0f0f0;
+            padding: 15px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>JS 在线审计</h1>
+    <p>请输入 JavaScript 文件的 URL 或直接粘贴 JavaScript 代码进行审计：</p>
+
+    <textarea id="jsInput" placeholder="粘贴 JS 链接或代码..."></textarea>
+    <br><br>
+    <button onclick="auditJS()">审计代码</button>
+
+    <h3>解析结果：</h3>
+    <pre id="auditResult"></pre>
+</div>
+
+<script>
+    function auditJS() {
+        const input = document.getElementById("jsInput").value.trim();
+        const resultElement = document.getElementById("auditResult");
+
+        // 清空结果
+        resultElement.textContent = '';
+
+        // 判断是链接还是代码
+        if (input.startsWith('http') || input.startsWith('www')) {
+            // 如果是链接，尝试获取 JavaScript 代码
+            fetch(input)
+                .then(response => response.text())
+                .then(jsCode => {
+                    resultElement.textContent = '获取到的 JavaScript 代码：\n\n' + jsCode;
+
+                    // 简单的审计：检查是否包含危险的函数
+                    const auditResults = auditCode(jsCode);
+                    resultElement.textContent += '\n\n审计结果：\n' + auditResults;
+                })
+                .catch(error => {
+                    resultElement.textContent = '获取 JS 链接失败: ' + error.message;
+                });
+        } else {
+            // 如果是直接粘贴的代码
+            resultElement.textContent = '输入的 JavaScript 代码：\n\n' + input;
+
+            // 简单的审计：检查是否包含危险的函数
+            const auditResults = auditCode(input);
+            resultElement.textContent += '\n\n审计结果：\n' + auditResults;
+        }
+    }
+
+    function auditCode(jsCode) {
+        // 这里可以添加更复杂的审计逻辑
+        const dangerousFunctions = ['eval', 'setTimeout', 'setInterval', 'document.write'];
+        let auditResults = '未发现危险函数。';
+
+        dangerousFunctions.forEach(func => {
+            if (jsCode.includes(func)) {
+                auditResults = `警告：发现危险函数 "${func}"！`;
+            }
+        });
+
+        return auditResults;
+    }
+</script>
+
+</body>
+</html>
