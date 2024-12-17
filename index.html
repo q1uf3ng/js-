@@ -68,10 +68,11 @@
         const input = document.getElementById("jsInput").value.trim();
         const resultElement = document.getElementById("auditResult");
 
-
+        // 清空结果
         resultElement.textContent = '';
 
         if (input) {
+            // 简单的审计：检查是否包含危险的模式和关键字
             const auditResults = auditCode(input);
             resultElement.textContent = '审计结果：\n' + auditResults;
         } else {
@@ -80,41 +81,45 @@
     }
 
     function auditCode(jsCode) {
+        // 审计规则：检查特定的 HTTP 请求方法、URL、参数等
         const patterns = [
-            { pattern: /type:\s?"POST"/i, message: '警告：发现 POST 请求类型。' },
-            { pattern: /type:\s?"GET"/i, message: '警告：发现 GET 请求类型。' },
-            { pattern: /post\(/i, message: '警告：发现 post() 方法调用。' },
-            { pattern: /get\(/i, message: '警告：发现 get() 方法调用。' },
-            { pattern: /ashx\?/i, message: '警告：发现可能的 ASP.NET 处理程序请求 (ashx?)。' },
-            { pattern: /url:/i, message: '警告：发现 URL 关键字。' },
-            { pattern: /url:'/i, message: '警告：发现 URL 字符串。' },
-            { pattern: /url:"/i, message: '警告：发现 URL 字符串。' },
-            { pattern: /path:/i, message: '警告：发现路径关键字。' },
-            { pattern: /path:'/i, message: '警告：发现路径字符串。' },
-            { pattern: /path:"/i, message: '警告：发现路径字符串。' },
-            { pattern: /action\?/i, message: '警告：发现 action 参数。' },
-            { pattern: /\/\/.*/i, message: '警告：发现单行注释。' },
-            { pattern: /\/\*[\s\S]*?\*\//i, message: '警告：发现多行注释。' },
-            { pattern: /eval\s*\(/i, message: '警告：发现 eval() 函数调用。' },
-            { pattern: /apikey\s*=\s*['"][a-zA-Z0-9_-]{32,}['"]/i, message: '警告：发现 API 密钥参数。' },
-            { pattern: /data/i, message: '警告：发现数据关键字。' },
-            { pattern: /params/i, message: '警告：发现参数关键字。' },
+            { pattern: /type:\s?"POST"/i, message: '警告：发现 POST 请求类型' },
+            { pattern: /type:\s?"GET"/i, message: '警告：发现 GET 请求类型' },
+            { pattern: /post\(/i, message: '警告：发现 post() 方法调用' },
+            { pattern: /get\(/i, message: '警告：发现 get() 方法调用' },
+            { pattern: /ashx\?/i, message: '警告：发现可能的 ASP.NET 处理程序请求 (ashx?)' },
+            { pattern: /url:/i, message: '警告：发现 URL 关键字' },
+            { pattern: /url:'/i, message: '警告：发现 URL 字符串' },
+            { pattern: /url:"/i, message: '警告：发现 URL 字符串' },
+            { pattern: /path:/i, message: '警告：发现路径关键字' },
+            { pattern: /path:'/i, message: '警告：发现路径字符串' },
+            { pattern: /path:"/i, message: '警告：发现路径字符串' },
+            { pattern: /action\?/i, message: '警告：发现 action 参数' },
+            { pattern: /\/\/.*/i, message: '警告：发现单行注释' },
+            { pattern: /\/\*[\s\S]*?\*\//i, message: '警告：发现多行注释' },
+            { pattern: /eval\s*\(/i, message: '警告：发现 eval() 函数调用' },
+            { pattern: /apikey\s*=\s*['"][a-zA-Z0-9_-]{32,}['"]/i, message: '警告：发现 API 密钥参数' },
+            { pattern: /data/i, message: '警告：发现数据关键字' },
+            { pattern: /params/i, message: '警告：发现参数关键字' },
             { pattern: /password/i, message: '警告：发现敏感参数 "password"。' },
-            { pattern: /ak\s*=\s*['"][a-zA-Z0-9_-]{16,40}['"]/i, message: '警告：发现 Access Key (AK) 泄露。' },
-            { pattern: /sk\s*=\s*['"][a-zA-Z0-9_-]{16,40}['"]/i, message: '警告：发现 Secret Key (SK) 泄露。' },
-            { pattern: /"ak"\s*:\s*["'][a-zA-Z0-9_-]{16,40}["']/i, message: '警告：发现 JSON 中的 Access Key (AK) 泄露。' },
-            { pattern: /"sk"\s*:\s*["'][a-zA-Z0-9_-]{16,40}["']/i, message: '警告：发现 JSON 中的 Secret Key (SK) 泄露。' },
-            { pattern: /access[_-]?key\s*=\s*['"][a-zA-Z0-9_-]{16,40}['"]/i, message: '警告：发现可能的 Access Key (AK) 泄露。' },
-            { pattern: /secret[_-]?key\s*=\s*['"][a-zA-Z0-9_-]{16,40}['"]/i, message: '警告：发现可能的 Secret Key (SK) 泄露。' },
-            { pattern: /pass/i, message: '警告：发现敏感参数 "pass"。' },
-            { pattern: /passwd/i, message: '警告：发现敏感参数 "passwd"。' },
-            { pattern: /admin/i, message: '警告：发现敏感参数 "admin"。' },
-            { pattern: /name/i, message: '警告：发现敏感参数 "name"。' }
+            { pattern: /ak\s*=\s*['"][a-zA-Z0-9_-]{16,40}['"]/i, message: '警告：发现 Access Key (AK) 泄露' },
+            { pattern: /sk\s*=\s*['"][a-zA-Z0-9_-]{16,40}['"]/i, message: '警告：发现 Secret Key (SK) 泄露' },
+            { pattern: /"ak"\s*:\s*["'][a-zA-Z0-9_-]{16,40}["']/i, message: '警告：发现 JSON 中的 Access Key (AK) 泄露' },
+            { pattern: /"sk"\s*:\s*["'][a-zA-Z0-9_-]{16,40}["']/i, message: '警告：发现 JSON 中的 Secret Key (SK) 泄露' },
+            { pattern: /access[_-]?key\s*=\s*['"][a-zA-Z0-9_-]{16,40}['"]/i, message: '警告：发现可能的 Access Key (AK) 泄露' },
+            { pattern: /secret[_-]?key\s*=\s*['"][a-zA-Z0-9_-]{16,40}['"]/i, message: '警告：发现可能的 Secret Key (SK) 泄露' },
+            { pattern: /pass/i, message: '警告：发现敏感参数 "pass"' },
+            { pattern: /passwd/i, message: '警告：发现敏感参数 "passwd"' },
+            { pattern: /admin/i, message: '警告：发现敏感参数 "admin"' },
+            { pattern: /source:"/i, message: '警告：发现敏感参数 "source"' },
+            { pattern: /name/i, message: '警告：发现敏感参数 "name"' }
+
         ];
 
         let auditResults = '';
         let matchFound = false;
 
+        // 检查所有模式
         patterns.forEach(rule => {
             const matches = jsCode.match(rule.pattern);
             if (matches) {
@@ -123,6 +128,7 @@
             }
         });
 
+        // 捕获变量赋值内容
         const variablePattern = /\s*([\w\d_]+)\s*=\s*["']([^"']+)["']/g;
         let variableMatches;
         while ((variableMatches = variablePattern.exec(jsCode)) !== null) {
